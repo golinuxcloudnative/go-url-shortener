@@ -15,6 +15,7 @@ type RedisCfg struct {
 	Host     string `mapstructure:"REDIS_HOST"`
 	Port     string `mapstructure:"REDIS_PORT"`
 	Password string `mapstructure:"REDIS_PASSWORD"`
+	DB       int    `mapstructurre:"REDIS_DB"`
 }
 
 type ServerCfg struct {
