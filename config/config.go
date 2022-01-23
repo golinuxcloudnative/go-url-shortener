@@ -7,12 +7,18 @@ import (
 )
 
 type Config struct {
-	Redis RedisCfg
+	Redis  RedisCfg
+	Server ServerCfg
 }
 
 type RedisCfg struct {
-	Host string `mapstructure:"REDIS_HOST"`
-	Port string `mapstructure:"REDIS_PORT"`
+	Host     string `mapstructure:"REDIS_HOST"`
+	Port     string `mapstructure:"REDIS_PORT"`
+	Password string `mapstructure:"REDIS_PASSWORD"`
+}
+
+type ServerCfg struct {
+	Port string `mapstructure:"SERVER_PORT"`
 }
 
 func NewConfig() (config *Config, err error) {
@@ -33,12 +39,21 @@ func NewConfig() (config *Config, err error) {
 
 	err = viper.Unmarshal(&redisCfg)
 	if err != nil {
-		log.Fatalf("unable to unmarshal config %v", err)
+		log.Fatalf("unable to unmarshal redis config %v", err)
+		return
+	}
+
+	serverCfg := &ServerCfg{}
+
+	err = viper.Unmarshal(&serverCfg)
+	if err != nil {
+		log.Fatalf("unable to unmarshal server config %v", err)
 		return
 	}
 
 	config = &Config{
-		Redis: *redisCfg,
+		Redis:  *redisCfg,
+		Server: *serverCfg,
 	}
 
 	return
