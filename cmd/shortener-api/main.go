@@ -2,21 +2,26 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/golinuxcloudnative/go-url-shortener/config"
 	"github.com/golinuxcloudnative/go-url-shortener/internal/api/server"
-	repositoryRedis "github.com/golinuxcloudnative/go-url-shortener/repository/url/redis"
-	"github.com/golinuxcloudnative/go-url-shortener/usecases/url"
+	repositoryRedis "github.com/golinuxcloudnative/go-url-shortener/repository/redis"
 	"github.com/labstack/echo/v4"
 )
 
+var Version, Build string
+
 func main() {
+	file := flag.String("file", ".env", "env file")
+	flag.Parse()
+
 	ctx := context.Background()
 
-	cfg, err := config.NewConfig()
+	cfg, err := config.NewConfig(*file)
 	if err != nil {
 		log.Println(err)
 	}
@@ -35,16 +40,10 @@ func main() {
 	}
 	log.Printf("database connection successful: %v", ping)
 
-	dbRepo := repositoryRedis.NewRepositoryRedis(rdb)
-	urlService := url.NewService(dbRepo)
-	url, err := urlService.CreateURL("google.com")
-	if err != nil {
-		log.Fatalf("could create short version: %v", err)
-	}
-	fmt.Println(url)
+	healthzRepo := repositoryRedis.NewRepositoryHealthzRedis(rdb)
 
 	echo := echo.New()
 
-	s := server.NewServer(echo, cfg)
+	s := server.NewServer(echo, cfg, healthzRepo)
 	s.Run()
 }

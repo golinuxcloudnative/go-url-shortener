@@ -21,8 +21,8 @@ type ServerCfg struct {
 	Port string `mapstructure:"SERVER_PORT"`
 }
 
-func NewConfig() (config *Config, err error) {
-	viper.SetConfigFile(".env")
+func NewConfig(file string) (config *Config, err error) {
+	viper.SetConfigFile(file)
 	viper.SetConfigType("env")
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()

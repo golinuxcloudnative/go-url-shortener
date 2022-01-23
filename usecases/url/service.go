@@ -1,14 +1,14 @@
-package url
+package usecaseUrl
 
 import "github.com/golinuxcloudnative/go-url-shortener/domain"
 
 //Service url usecase
 type Service struct {
-	repo Repository
+	repo domain.UrlRepository
 }
 
 //NewService create a url service
-func NewService(r Repository) *Service {
+func NewService(r domain.UrlRepository) *Service {
 	return &Service{repo: r}
 }
 

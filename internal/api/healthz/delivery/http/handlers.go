@@ -1,12 +1,37 @@
 package http
 
 import (
+	"log"
 	"net/http"
 
+	"github.com/golinuxcloudnative/go-url-shortener/config"
+	"github.com/golinuxcloudnative/go-url-shortener/domain"
 	"github.com/labstack/echo/v4"
 )
 
-func healthz(c echo.Context) error {
+// type healthzHandlers struct {
+// 	db     *domain.UrlRepository
+// 	cfg    *config.Config
+// 	status interface{}
+// }
 
-	return c.JSON(http.StatusOK, map[string]string{"status": "Up and Running"})
+// func NewHealthzHandlers(db *domain.UrlRepository, cfg *config.Config) *healthzHandlers {
+// 	return &healthzHandlers{db: db, cfg: cfg}
+// }
+
+func healthz(cfg *config.Config, svc domain.HealthzUseCase) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		result, err := svc.Ping()
+		if err != nil {
+			log.Printf("could not ping database: %v", err)
+			result = err.Error()
+		}
+
+		healthz := domain.Healthz{
+			Status:   "Up and Running",
+			Database: result,
+		}
+
+		return c.JSON(http.StatusOK, healthz)
+	}
 }
