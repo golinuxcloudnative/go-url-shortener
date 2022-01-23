@@ -11,12 +11,22 @@ import (
 type server struct {
 	echo        *echo.Echo
 	cfg         *config.Config
+	healthz     domain.Healthz
 	healthzRepo domain.HealthzRepository
 	urlRepo     domain.UrlRepository
 }
 
-func NewServer(echo *echo.Echo, cfg *config.Config, healthzRepo domain.HealthzRepository) *server {
-	return &server{echo: echo, cfg: cfg, healthzRepo: healthzRepo}
+func NewServer(echo *echo.Echo, cfg *config.Config, healthzRepo domain.HealthzRepository, urlRepo domain.UrlRepository) *server {
+	return &server{
+		echo: echo,
+		cfg:  cfg,
+		healthz: domain.Healthz{
+			Status:  "healthy",
+			Version: "3223",
+		},
+		healthzRepo: healthzRepo,
+		urlRepo:     urlRepo,
+	}
 }
 
 func (s *server) Run() error {

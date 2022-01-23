@@ -19,18 +19,17 @@ import (
 // 	return &healthzHandlers{db: db, cfg: cfg}
 // }
 
-func healthz(cfg *config.Config, svc domain.HealthzUseCase) echo.HandlerFunc {
+func healthz(cfg *config.Config, healthz domain.Healthz, svc domain.HealthzUseCase) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		result, err := svc.Ping()
 		if err != nil {
 			log.Printf("could not ping database: %v", err)
-			result = err.Error()
+			healthz.Database = err.Error()
+			healthz.Status = "unhealthy"
+			return c.JSON(http.StatusServiceUnavailable, healthz)
 		}
 
-		healthz := domain.Healthz{
-			Status:   "Up and Running",
-			Database: result,
-		}
+		healthz.Database = result
 
 		return c.JSON(http.StatusOK, healthz)
 	}

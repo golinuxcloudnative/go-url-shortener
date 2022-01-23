@@ -30,20 +30,21 @@ func main() {
 	opt := &redis.Options{
 		Addr:     addr,
 		Password: cfg.Redis.Password,
-		DB:       0,
+		DB:       cfg.Redis.DB,
 	}
 
 	rdb := redis.NewClient(opt)
 	ping, err := rdb.Ping(ctx).Result()
 	if err != nil {
-		log.Fatalf("could not connect database: %v", err)
+		log.Fatalf("exiting... could not connect database: %v", err)
 	}
 	log.Printf("database connection successful: %v", ping)
 
 	healthzRepo := repositoryRedis.NewRepositoryHealthzRedis(rdb)
+	urlRepo := repositoryRedis.NewRepositoryURLRedis(rdb)
 
 	echo := echo.New()
 
-	s := server.NewServer(echo, cfg, healthzRepo)
+	s := server.NewServer(echo, cfg, healthzRepo, urlRepo)
 	s.Run()
 }

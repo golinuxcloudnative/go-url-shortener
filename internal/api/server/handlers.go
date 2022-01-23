@@ -20,5 +20,5 @@ func (s *server) mapHandlers() {
 	//Health check handler
 	gHealthz := g.Group("/healthz")
 
-	httpHealthz.MapHealthzRoutes(gHealthz, s.cfg, usecaseHealthz.NewService(s.healthzRepo))
+	httpHealthz.MapHealthzRoutes(gHealthz, s.cfg, s.healthz, usecaseHealthz.NewService(s.healthzRepo))
 }

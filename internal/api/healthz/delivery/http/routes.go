@@ -6,6 +6,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func MapHealthzRoutes(g *echo.Group, cfg *config.Config, service domain.HealthzUseCase) {
-	g.GET("", healthz(cfg, service))
+func MapHealthzRoutes(g *echo.Group, cfg *config.Config, shealthz domain.Healthz, service domain.HealthzUseCase) {
+	g.GET("", healthz(cfg, shealthz, service))
 }
