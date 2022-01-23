@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/golinuxcloudnative/go-url-shortener/config"
+	"github.com/golinuxcloudnative/go-url-shortener/domain"
 	"github.com/golinuxcloudnative/go-url-shortener/internal/api/server"
 	repositoryRedis "github.com/golinuxcloudnative/go-url-shortener/repository/redis"
 	"github.com/labstack/echo/v4"
@@ -39,12 +40,17 @@ func main() {
 		log.Fatalf("exiting... could not connect database: %v", err)
 	}
 	log.Printf("database connection successful: %v", ping)
+	healthz := domain.Healthz{
+		Version:  Version,
+		Status:   domain.Healthy,
+		Database: ping,
+	}
 
 	healthzRepo := repositoryRedis.NewRepositoryHealthzRedis(rdb)
 	urlRepo := repositoryRedis.NewRepositoryURLRedis(rdb)
 
 	echo := echo.New()
 
-	s := server.NewServer(echo, cfg, healthzRepo, urlRepo)
+	s := server.NewServer(echo, cfg, healthz, healthzRepo, urlRepo)
 	s.Run()
 }

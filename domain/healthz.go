@@ -15,3 +15,8 @@ type HealthzRepository interface {
 type HealthzUseCase interface {
 	Ping() (string, error)
 }
+
+const (
+	Unhealthy string = "unhealthy"
+	Healthy   string = "healthy"
+)

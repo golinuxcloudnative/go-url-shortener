@@ -16,14 +16,11 @@ type server struct {
 	urlRepo     domain.UrlRepository
 }
 
-func NewServer(echo *echo.Echo, cfg *config.Config, healthzRepo domain.HealthzRepository, urlRepo domain.UrlRepository) *server {
+func NewServer(echo *echo.Echo, cfg *config.Config, healthz domain.Healthz, healthzRepo domain.HealthzRepository, urlRepo domain.UrlRepository) *server {
 	return &server{
-		echo: echo,
-		cfg:  cfg,
-		healthz: domain.Healthz{
-			Status:  "healthy",
-			Version: "3223",
-		},
+		echo:        echo,
+		cfg:         cfg,
+		healthz:     healthz,
 		healthzRepo: healthzRepo,
 		urlRepo:     urlRepo,
 	}

@@ -25,10 +25,11 @@ func healthz(cfg *config.Config, healthz domain.Healthz, svc domain.HealthzUseCa
 		if err != nil {
 			log.Printf("could not ping database: %v", err)
 			healthz.Database = err.Error()
-			healthz.Status = "unhealthy"
+			healthz.Status = domain.Unhealthy
 			return c.JSON(http.StatusServiceUnavailable, healthz)
 		}
 
+		healthz.Status = domain.Healthy
 		healthz.Database = result
 
 		return c.JSON(http.StatusOK, healthz)
