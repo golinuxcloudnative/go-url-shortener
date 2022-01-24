@@ -9,16 +9,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// type healthzHandlers struct {
-// 	db     *domain.UrlRepository
-// 	cfg    *config.Config
-// 	status interface{}
-// }
-
-// func NewHealthzHandlers(db *domain.UrlRepository, cfg *config.Config) *healthzHandlers {
-// 	return &healthzHandlers{db: db, cfg: cfg}
-// }
-
 func healthz(cfg *config.Config, healthz domain.Healthz, svc domain.HealthzUseCase) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		result, err := svc.Ping()

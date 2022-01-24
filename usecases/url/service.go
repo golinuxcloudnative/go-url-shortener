@@ -1,6 +1,9 @@
 package usecaseUrl
 
-import "github.com/golinuxcloudnative/go-url-shortener/domain"
+import (
+	"github.com/golinuxcloudnative/go-url-shortener/domain"
+	"github.com/lithammer/shortuuid/v3"
+)
 
 //Service url usecase
 type Service struct {
@@ -14,16 +17,30 @@ func NewService(r domain.UrlRepository) *Service {
 
 //Get an url
 func (s *Service) GetURL(key string) (*domain.URLShortener, error) {
-	url, err := s.repo.GetURL(key)
+	short, err := s.repo.GetURL(key)
 	if err != nil {
 		return nil, err
 	}
-	return url, err
+	if short == nil {
+		return nil, nil
+	}
+	return short, err
 }
 
 func (s *Service) CreateURL(url string) (*domain.URLShortener, error) {
-	short := &domain.URLShortener{}
-	return short, s.repo.CreateURL(*short)
+	short, err := s.GetURL(url)
+	if err != nil {
+		return nil, err
+	}
+
+	if short == nil {
+		id := shortuuid.New()
+		short := &domain.URLShortener{URL: url, SHORT: id}
+		return short, s.repo.CreateURL(*short)
+	}
+
+	return short, nil
+
 }
 
 func (s *Service) Update(url domain.URLShortener) error {
